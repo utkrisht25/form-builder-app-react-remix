@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from '@remix-run/react';
-// No longer need uuid here for blank form creation, as FormBuilder handles ID generation on save.
-// import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'; // We need uuid again for this logic
 
 export default function Index() {
   const [forms, setForms] = useState([]);
@@ -13,10 +12,25 @@ export default function Index() {
     setForms(storedForms);
   }, []);
 
-  // Simplified: This function now just navigates to the blank form builder route.
-  // The actual new form creation and ID generation happens when the user saves it in FormBuilder.
+  // Reverted: This function now creates a new form and navigates to its edit page
   const handleCreateNewForm = () => {
-    navigate('/form-builder');
+    const FormId = uuidv4();
+    const newForm = {
+      id: FormId,
+      title: 'Untitled form',
+      description: '',
+      fields: [], // Initialize with an empty array of fields
+      createdAt: new Date().toISOString(),
+      lastModified: new Date().toISOString(),
+    };
+
+    // Save the new form to localStorage immediately
+    const updatedForms = [...forms, newForm];
+    localStorage.setItem('forms', JSON.stringify(updatedForms));
+    setForms(updatedForms); // Update state to reflect the new form immediately
+
+    // Navigate to the form builder for the new form
+    navigate(`/edit-form/${FormId}`);
   };
 
   return (
@@ -24,13 +38,14 @@ export default function Index() {
       <header className="mb-10">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-6">Form Builder</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Changed onClick to Link directly to /form-builder */}
-          <Link to="/form-builder" className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow">
+          {/* Reverted: onClick handler to create and navigate */}
+          <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow"
+               onClick={handleCreateNewForm}>
             <div className="bg-blue-600 rounded-full p-3 mb-3">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
             </div>
             <h2 className="text-xl font-semibold text-gray-800">Blank form</h2>
-          </Link>
+          </div>
           {/* Example Template Previews (You can make these functional later) */}
           <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow">
             <div className="bg-green-200 rounded-full p-3 mb-3">
@@ -76,7 +91,7 @@ export default function Index() {
                     View/Edit
                   </Link>
                   <Link
-                    to={`/form-preview/${form.id}`}
+                    to={`/form-preview/${form.id}`} 
                     className="text-green-600 hover:underline font-medium"
                   >
                     Preview

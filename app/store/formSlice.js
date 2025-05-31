@@ -16,7 +16,7 @@ const formSlice = createSlice({
       state.description = action.payload.description || '';
       state.questions = action.payload.fields ? action.payload.fields.map(q => ({
         ...q,
-        name: q.id, // Ensure 'name' is set from 'id' when loading
+        // name: q.id, // Ensure 'name' is set from 'id' when loading
         minLength: q.minLength !== undefined ? q.minLength : undefined,
         maxLength: q.maxLength !== undefined ? q.maxLength : undefined,
         pattern: q.pattern !== undefined ? q.pattern : undefined,
@@ -37,7 +37,7 @@ const formSlice = createSlice({
       // and default validation properties are present
       state.questions.push({
         ...action.payload,
-        name: action.payload.id, // Ensure 'name' is set from 'id' when adding
+        // name: action.payload.id, // Ensure 'name' is set from 'id' when adding
         minLength: action.payload.minLength !== undefined ? action.payload.minLength : undefined,
         maxLength: action.payload.maxLength !== undefined ? action.payload.maxLength : undefined,
         pattern: action.payload.pattern !== undefined ? action.payload.pattern : undefined,
@@ -98,7 +98,7 @@ export const {
   removeQuestion,
   updateQuestion,
   addOption,
-  removeOption: removeOptionAction,
+  removeOption,
   updateOption,
   reorderQuestions,
 } = formSlice.actions;

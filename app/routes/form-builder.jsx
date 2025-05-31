@@ -1,10 +1,9 @@
-    import React from 'react';
-    import FormBuilderComponent from '../components/FormBuilder'; // Adjust the import path as necessary
+     import FormBuilder from '../components/FormBuilder.jsx'; // Adjust the import path as necessary
 
     function FormBuilderPage() {
       return (
         <div className="min-h-screen bg-gray-100">
-          <FormBuilderComponent />
+          <FormBuilder />
         </div>
       );
     }

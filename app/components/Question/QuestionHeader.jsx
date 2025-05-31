@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Define available question types for the dropdown (can be imported from a central place later)
-const questionTypes = [
+export const questionTypes = [
   { id: 'short-answer', label: 'Short answer' },
   { id: 'paragraph', label: 'Paragraph' },
   { id: 'multiple-choice', label: 'Multiple choice' },

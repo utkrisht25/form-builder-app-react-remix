@@ -22,3 +22,5 @@ function FieldTypes() {
 }
 
 export default FieldTypes;
+// This component renders a list of field types that can be dragged and dropped into a form.
+// Each field type is represented by a div that is styled and has a drag-and-drop functionality.

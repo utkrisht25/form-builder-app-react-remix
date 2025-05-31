@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from '@remix-run/react';
-import { v4 as uuidv4 } from 'uuid'; // We need uuid again for this logic
+import { copyFormLink } from '../components/helper.jsx';
 
 export default function Index() {
   const [forms, setForms] = useState([]);
+  const [copiedId, setCopiedId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,23 +15,7 @@ export default function Index() {
 
   // Reverted: This function now creates a new form and navigates to its edit page
   const handleCreateNewForm = () => {
-    const FormId = uuidv4();
-    const newForm = {
-      id: FormId,
-      title: 'Untitled form',
-      description: '',
-      fields: [], // Initialize with an empty array of fields
-      createdAt: new Date().toISOString(),
-      lastModified: new Date().toISOString(),
-    };
-
-    // Save the new form to localStorage immediately
-    const updatedForms = [...forms, newForm];
-    localStorage.setItem('forms', JSON.stringify(updatedForms));
-    setForms(updatedForms); // Update state to reflect the new form immediately
-
-    // Navigate to the form builder for the new form
-    navigate(`/edit-form/${FormId}`);
+    navigate('/form-builder');
   };
 
   return (
@@ -38,7 +23,6 @@ export default function Index() {
       <header className="mb-10">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-6">Form Builder</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Reverted: onClick handler to create and navigate */}
           <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow"
                onClick={handleCreateNewForm}>
             <div className="bg-blue-600 rounded-full p-3 mb-3">
@@ -46,7 +30,6 @@ export default function Index() {
             </div>
             <h2 className="text-xl font-semibold text-gray-800">Blank form</h2>
           </div>
-          {/* Example Template Previews (You can make these functional later) */}
           <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow">
             <div className="bg-green-200 rounded-full p-3 mb-3">
               <span className="text-green-800 text-lg font-semibold">Template Preview</span>
@@ -91,11 +74,26 @@ export default function Index() {
                     View/Edit
                   </Link>
                   <Link
-                    to={`/form-preview/${form.id}`} 
+                    to={`/form-preview/${form.id}`}
                     className="text-green-600 hover:underline font-medium"
                   >
                     Preview
                   </Link>
+                  <button
+                    onClick={() => copyFormLink(form.id, setCopiedId)}
+                    className="relative text-purple-600 hover:underline font-medium flex items-center"
+                    aria-label="Copy form link"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Copy Link
+                    {copiedId === form.id && (
+                      <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded w-max">
+                        Link copied!
+                      </span>
+                    )}
+                  </button>
                 </div>
               </div>
             ))}
@@ -105,3 +103,4 @@ export default function Index() {
     </div>
   );
 }
+

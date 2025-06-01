@@ -10,11 +10,11 @@ import {
 import { Provider } from 'react-redux'; // <<< THIS IS CRUCIAL
 import { store } from './store/store'; // <<< THIS IS CRUCIAL (ensure path is correct)
 
-import "./tailwind.css"; // Your main Tailwind CSS import
+import stylesheet from "./tailwind.css"; // Your main Tailwind CSS import
 import { ThemeProvider } from "./context/ThemeContext"; // Adjust the import path as necessary
 
 export function links() {
-  return [];
+  return [{ rel: "stylesheet", href: stylesheet }];
 }
 
 export default function App() {

@@ -1,40 +1,88 @@
-# Welcome to Remix!
+# Form Builder App (React + Remix)
+A customizable and dynamic form builder built using **React**, **Remix**, **Redux**, and **Tailwind CSS**. Users can create multi-step forms with real-time preview, drag-and-drop fields, and dark mode support.
 
-- 📖 [Remix docs](https://remix.run/docs)
+🌐 **Live Demo**: [https://form-builder-app-react-remix.netlify.app](https://form-builder-app-react-remix.netlify.app)
 
-## Development
+---
 
-Run the dev server:
+## 🚀 Features
 
-```shellscript
+- 🧩 Drag-and-drop form builder
+- ✨ Real-time form preview
+- 📄 Multi-step forms
+- 🎨 Dark/Light theme toggle
+- 💾 Save & Load form templates
+- 🔗 Shareable form links
+- ⏪ Undo/Redo functionality
+- ⚙️ Field customization & reordering
+- 🧠 State management using Redux
+- 🌙 Tailwind-based dark mode support
+
+---
+
+## 🧰 Tech Stack
+
+- [React](https://reactjs.org/)
+- [Remix](https://remix.run/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Redux](https://redux.js.org/)
+- [Netlify](https://www.netlify.com/) (Deployment)
+
+---
+## 📂 Project Structure
+form-builder-app-react-remix/
+├── app/
+│ ├── components/ # UI components
+│ ├── context/ # Theme context
+│ ├── data/ # Loader & action data
+│ ├── routes/ # App routes
+│ ├── store/ # Redux store
+│ ├── tailwind.css # Tailwind import
+│ ├── root.jsx # Remix root layout
+│ ├── entry.client.jsx # Client entry point
+│ └── entry.server.jsx # Server entry point
+├── public/ # Static assets
+├── remix.config.js # Remix config
+├── tailwind.config.js # Tailwind config
+├── postcss.config.cjs # PostCSS config
+├── server.js # Express (if used)
+└── README.md
+
+---
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- Node.js (v18+ recommended)
+- npm or yarn
+
+### Installation
+
+```bash
+git clone https://github.com/utkrisht25/form-builder-app-react-remix.git
+cd form-builder-app-react-remix
+npm install
+
+Development 
 npm run dev
-```
-
-## Deployment
-
-First, build your app for production:
-
-```sh
+🔧 Build for Production
 npm run build
 ```
 
-Then run the app in production mode:
+🌐 Deployment on Netlify
+This app is deployed on Netlify.
 
-```sh
-npm start
-```
+Make sure to set the following build settings:
 
-Now you'll need to pick a host to deploy it to.
+Build command: npm run build
 
-### DIY
+Publish directory: public
 
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
+Base directory: .
 
-Make sure to deploy the output of `npm run build`
+🙌 Author
+Made with 💻 by Utkrisht Yogi
 
-- `build/server`
-- `build/client`
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
+📃 License
+This project is licensed under the MIT License.

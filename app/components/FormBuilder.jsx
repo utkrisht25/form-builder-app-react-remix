@@ -238,7 +238,7 @@ function FormBuilder({ formId: propFormId }) {
               value={formDescription}
               onChange={(e) => dispatch(updateFormDetails({ description: e.target.value }))}
               placeholder="Form Description"
-              className="w-full text-gray-600 dark:text-white mb-8 p-2 border-b-2 border-transparent focus:border-blue-500 focus:outline-none bg-transparent resize-none transition-colors"
+              className="w-full text-gray-600  mb-8 p-2 border-b-2 border-transparent focus:border-blue-500 focus:outline-none bg-transparent resize-none transition-colors dark:text-white"
               rows="2"
             />
 

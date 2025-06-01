@@ -1,332 +1,385 @@
-import  { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useParams, useNavigate } from '@remix-run/react';
-import { setInitialForm } from '~/store/formSlice';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate, Link } from '@remix-run/react';
+import { useForm, useWatch } from 'react-hook-form';
+import {copyFormLink} from "../components/helper.jsx";
 
-function FormPreview() {
-  const dispatch = useDispatch();
+// Helper function to render individual form fields in preview mode
+const renderFormField = (field, register, errors) => {
+  const { name, type, title, required, options, minLength, maxLength, pattern } = field;
+
+  // Define validation rules for react-hook-form
+  const validationRules = {
+    required: required && "This field is required.",
+    minLength: minLength ? { value: minLength, message: `Minimum length is ${minLength} characters.` } : undefined,
+    maxLength: maxLength ? { value: maxLength, message: `Maximum length is ${maxLength} characters.` } : undefined,
+    pattern: pattern ? { value: new RegExp(pattern), message: "Please match the required format." } : undefined,
+  };
+
+  switch (type) {
+    case 'short-answer':
+      return (
+        <div key={name} className="mb-4">
+          <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+            {title} {required && <span className="text-red-500">*</span>}
+          </label>
+          <input
+            type="text"
+            id={name} //here name (which is the field's id) is used as the input's  html id
+            {...register(name, validationRules)} // here , name is used as the field's name in react-hook-form and also used for react-hook-form's register function
+            className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors[name] ? 'border-red-500' : 'border-gray-300'}`}
+          />
+          {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name].message}</p>}
+        </div>
+      );
+    case 'paragraph':
+      return (
+        <div key={name} className="mb-4">
+          <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+            {title} {required && <span className="text-red-500">*</span>}
+          </label>
+          <textarea
+            id={name}
+            rows="3"
+            {...register(name, validationRules)}
+            className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors[name] ? 'border-red-500' : 'border-gray-300'}`}
+          ></textarea>
+          {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name].message}</p>}
+        </div>
+      );
+    case 'multiple-choice':
+    case 'radio':
+      return (
+        <div key={name} className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {title} {required && <span className="text-red-500">*</span>}
+          </label>
+          {options.map(option => (
+            <div key={option.id} className="flex items-center mb-1"> {/* Added key here */}
+              <input
+                type="radio"
+                id={`${name}-${option.id}`}
+                value={option.text}
+                {...register(name, { required: required && "Please select an option." })}
+                className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+              />
+              <label htmlFor={`${name}-${option.id}`} className="ml-2 block text-sm text-gray-900">
+                {option.text}
+              </label>
+            </div>
+          ))}
+          {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name].message}</p>}
+        </div>
+      );
+    case 'checkboxes':
+      return (
+        <div key={name} className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {title} {required && <span className="text-red-500">*</span>}
+          </label>
+          {options.map(option => (
+            <div key={option.id} className="flex items-center mb-1"> {/* Added key here */}
+              <input
+                type="checkbox"
+                id={`${name}-${option.id}`}
+                value={option.text}
+                {...register(name, {
+                  validate: required ? (value) => {
+                    const isAnyChecked = Array.isArray(value) && value.length > 0;
+                    return isAnyChecked || "Please select at least one option.";
+                  } : undefined
+                })}
+                className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+              />
+              <label htmlFor={`${name}-${option.id}`} className="ml-2 block text-sm text-gray-900">
+                {option.text}
+              </label>
+            </div>
+          ))}
+          {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name].message}</p>}
+        </div>
+      );
+    case 'dropdown':
+      return (
+        <div key={name} className="mb-4">
+          <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+            {title} {required && <span className="text-red-500">*</span>}
+          </label>
+          <select
+            id={name}
+            {...register(name, validationRules)}
+            className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors[name] ? 'border-red-500' : 'border-gray-300'}`}
+          >
+            <option value="">Select an option</option>
+            {options.map(option => (
+              <option key={option.id} value={option.text}> {/* Added key here */}
+                {option.text}
+              </option>
+            ))}
+          </select>
+          {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name].message}</p>}
+        </div>
+      );
+    case 'date':
+      return (
+        <div key={name} className="mb-4">
+          <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+            {title} {required && <span className="text-red-500">*</span>}
+          </label>
+          <input
+            type="date"
+            id={name}
+            {...register(name, validationRules)}
+            className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors[name] ? 'border-red-500' : 'border-gray-300'}`}
+          />
+          {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name].message}</p>}
+        </div>
+      );
+    default:
+      return null;
+  }
+};
+
+
+export default function FormPreview({ formId: propFormId , isUserMode = false }) {
+  const formId = propFormId ;// Use prop or URL param
   const navigate = useNavigate();
-  const params = useParams();
-  const formId = params.formId;
+  const [form, setForm] = useState(null);
+  const [previewWidth, setPreviewWidth] = useState('w-full lg:max-w-3xl'); // Default to desktop-like width
+  const [showCopyNotification, setShowCopyNotification] = useState(false);
+  const [progress, setProgress] = useState(0); // Progress state for form completion
 
-  // Select form data from Redux store
-  const formTitle = useSelector(state => state.form.title);
-  const formDescription = useSelector(state => state.form.description);
-  const questions = useSelector(state => state.form.questions);
+  // Initialize react-hook-form - Using mode: 'onChange' to validate as user types
+  const { register, handleSubmit, formState: { errors }, control, getValues, reset } = useForm({
+    mode: 'onChange' // This enables validation as the user types
+  });
 
-  // State to manage input values and errors for preview
-  const [formData, setFormData] = useState({});
-  const [formErrors, setFormErrors] = useState({});
-  const [previewMode, setPreviewMode] = useState('desktop'); // 'desktop', 'tablet', 'mobile'
+  // Watch all form values for changes to update progress
+  const formValues = useWatch({
+    control,
+    defaultValue: {}
+  });
 
-  // Load form data when component mounts or formId changes
+  // Calculate form completion progress
+  useEffect(() => {
+    if (!form) return;
+
+    // Get all form fields including the required email field
+    const allFields = [
+      { name: 'previewEmailField', required: true },
+      ...form.fields
+    ];
+
+    // Count total fields and valid fields according to requirements
+    let validFieldCount = 0;
+    let totalFieldCount = 0;
+
+    allFields.forEach(field => {
+      const fieldValue = getValues(field.name);
+      const hasValue = Array.isArray(fieldValue)
+        ? fieldValue.length > 0
+        : fieldValue !== null && fieldValue !== undefined && fieldValue !== '';
+
+      // Check if field has validation errors
+      const hasError = errors[field.name] !== undefined;
+
+      // Check field validity based on validation rules
+      let isValid = true;
+      if (hasValue) {
+        // Check minLength validation for text fields
+        if (field.minLength && typeof fieldValue === 'string' && fieldValue.length < field.minLength) {
+          isValid = false;
+        }
+
+        // Check maxLength validation for text fields
+        if (field.maxLength && typeof fieldValue === 'string' && fieldValue.length > field.maxLength) {
+          isValid = false;
+        }
+
+        // Check pattern validation for text fields
+        if (field.pattern && typeof fieldValue === 'string') {
+          try {
+            const regex = new RegExp(field.pattern);
+            if (!regex.test(fieldValue)) {
+              isValid = false;
+            }
+          } catch (e) {
+            // If regex is invalid, consider the field invalid
+            isValid = false;
+          }
+        }
+      }
+
+      // Required fields are always counted in the total
+      if (field.required) {
+        totalFieldCount++;
+        // Count as valid only if it has a value AND passes validation AND no errors reported by React Hook Form
+        if (hasValue && isValid && !hasError) {
+          validFieldCount++;
+        }
+      }
+      // Optional fields are only counted in the total if they have any value
+      else if (hasValue) {
+        totalFieldCount++;
+        // Count as valid only if it passes validation AND no errors reported by React Hook Form
+        if (isValid && !hasError) {
+          validFieldCount++;
+        }
+      }
+      // Empty optional fields are not counted at all
+    });
+
+    // Calculate percentage (avoid division by zero)
+    let calculatedProgress = totalFieldCount === 0
+      ? 0
+      : Math.round((validFieldCount / totalFieldCount) * 100);
+
+    // Special case for scenario 5: If email is invalid and any field has error, set to 0%
+    if (errors.previewEmailField && Object.keys(errors).length > 1) {
+      calculatedProgress = 0;
+    }
+
+    setProgress(calculatedProgress);
+  }, [form, formValues, errors, getValues]);
+
   useEffect(() => {
     if (formId) {
-      const forms = JSON.parse(localStorage.getItem('forms') || '[]');
-      const existingForm = forms.find(form => form.id === formId);
-      if (existingForm) {
-        dispatch(setInitialForm(existingForm));
-        // Initialize formData with empty strings for all fields for preview
-        const initialData = {};
-        existingForm.fields.forEach(field => {
+      const storedForms = JSON.parse(localStorage.getItem('forms') || '[]');
+      const foundForm = storedForms.find(f => f.id === formId);
+      if (foundForm) {
+        setForm(foundForm);
+        // Set default values for the form fields based on the loaded form data
+        const defaultValues = {};
+        foundForm.fields.forEach(field => {
+          // IMPORTANT: Checkboxes need to be initialized as an empty array for react-hook-form
+          // if they are meant to collect multiple values.
           if (field.type === 'checkboxes') {
-            initialData[field.id] = [];
+            defaultValues[field.name] = []; // Initialize as empty array for multi-select
           } else {
-            initialData[field.id] = '';
+            defaultValues[field.name] = ''; // Initialize other types as empty string
           }
         });
-        setFormData(initialData);
-        setFormErrors({}); // Clear errors on load
+        reset(defaultValues); // Reset form with these initial empty values
       } else {
         console.warn(`Form with ID ${formId} not found for preview.`);
-        navigate('/'); // Go back to home if form not found
+        navigate('/');
       }
-    } else {
-      navigate('/');
     }
-  }, [formId, dispatch, navigate]);
+  }, [formId, navigate, reset]);
 
-  const handleInputChange = (questionId, value, type) => {
-    setFormData(prev => {
-      let newValue = value;
-      if (type === 'checkboxes') {
-        // For checkboxes, value is the option ID. Add/remove it from array
-        const currentValues = prev[questionId] || [];
-        if (currentValues.includes(value)) {
-          newValue = currentValues.filter(item => item !== value);
-        } else {
-          newValue = [...currentValues, value];
-        }
-      }
-      return { ...prev, [questionId]: newValue };
-    });
-    // Clear error for this field as user types
-    setFormErrors(prev => ({ ...prev, [questionId]: '' }));
+  const onSubmit = (data) => {
+    console.log('Form Submitted!', data);
+    alert('Form submitted successfully! Check console for data.');
+    // Here you would typically send the form data to a backend
   };
 
-  // Helper to determine CSS class for preview mode
-  const getPreviewClasses = () => {
-    switch (previewMode) {
-      case 'tablet':
-        return 'max-w-xl mx-auto shadow-lg'; // Tablet width
-      case 'mobile':
-        return 'max-w-sm mx-auto shadow-lg'; // Mobile width
-      default:
-        return 'max-w-3xl mx-auto shadow-lg'; // Desktop width
-    }
-  };
-
-  // Enhanced validation logic
-  const validateForm = () => {
-    const errors = {};
-    let isValid = true;
-
-    // Validate static Email field
-    const emailValue = formData['emailField'] || '';
-    if (!emailValue) {
-      errors['emailField'] = 'Email is required.';
-      isValid = false;
-    } else if (!/^\S+@\S+\.\S+$/.test(emailValue)) {
-      errors['emailField'] = 'Please enter a valid email address.';
-      isValid = false;
-    }
-
-    questions.forEach(q => {
-      const value = formData[q.id];
-      let questionHasError = false;
-
-      // Required validation
-      if (q.required) {
-        if (q.type === 'checkboxes') {
-          if (!value || value.length === 0) {
-            errors[q.id] = `${q.title} is required. Please select at least one option.`;
-            questionHasError = true;
-          }
-        } else if (!value || String(value).trim() === '') {
-          errors[q.id] = `${q.title} is required.`;
-          questionHasError = true;
-        }
-      }
-
-      // Min/Max Length validation (for short-answer, paragraph)
-      if (!questionHasError && (q.type === 'short-answer' || q.type === 'paragraph')) {
-        const textValue = String(value || '');
-        if (q.minLength !== undefined && textValue.length < q.minLength) {
-          errors[q.id] = `${q.title} must be at least ${q.minLength} characters long.`;
-          questionHasError = true;
-        }
-        if (q.maxLength !== undefined && textValue.length > q.maxLength) {
-          errors[q.id] = `${q.title} must be at most ${q.maxLength} characters long.`;
-          questionHasError = true;
-        }
-      }
-
-      // Pattern validation (for short-answer)
-      if (!questionHasError && q.type === 'short-answer' && q.pattern) {
-        try {
-          const regex = new RegExp(q.pattern);
-          if (!regex.test(String(value || ''))) {
-            errors[q.id] = `${q.title} does not match the required pattern.`;
-            questionHasError = true;
-          }
-        } catch (e) {
-          console.error("Invalid regex pattern:", q.pattern, e);
-          errors[q.id] = `Invalid pattern defined for ${q.title}.`;
-          questionHasError = true;
-        }
-      }
-
-      if (questionHasError) {
-        isValid = false;
-      }
-    });
-
-    setFormErrors(errors);
-    return isValid;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      alert('Form is valid and ready to submit! (In preview mode, no actual submission)');
-      console.log('Form Data:', formData);
-    } else {
-      alert('Please fix the errors in the form.');
-    }
-  };
-
+  if (!form) {
+    return <div className="text-center p-8 text-gray-600">Loading form or form not found...</div>;
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-6 px-4">
-      <div className="max-w-7xl mx-auto mb-6 flex justify-between items-center">
-        <button
-          onClick={() => navigate(`/edit-form/${formId}`)}
-          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-md shadow-md transition-colors"
-        >
-          &larr; Back to Builder
-        </button>
-
-        {/* Preview Mode Controls */}
-        <div className="flex bg-white rounded-md shadow-md p-1">
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+        {!isUserMode && <div className="flex space-x-2">
+          <Link to={`/edit-form/${form.id}`} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">
+            &larr; Back to Editor
+          </Link>
           <button
-            onClick={() => setPreviewMode('desktop')}
-            className={`py-2 px-4 rounded-md text-sm font-semibold ${previewMode === 'desktop' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+            onClick={()=> copyFormLink(form.id, setShowCopyNotification)}
+            className="relative px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"
           >
-            Desktop
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+            Copy Share Link
+            {showCopyNotification && (
+              <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded">
+                Link copied!
+              </span>
+            )}
+          </button>
+        </div>}
+        <h1 className="text-3xl font-bold text-gray-900 text-center sm:text-left">{form.title}</h1>
+        {!isUserMode && <div className="flex bg-white rounded-md shadow-md p-1">
+          <button
+            onClick={() => setPreviewWidth('w-full sm:max-w-xs')} // Mobile width
+            className={`py-2 px-4 rounded-l-md text-sm font-semibold ${previewWidth === 'w-full sm:max-w-xs' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+          >
+            Mobile
           </button>
           <button
-            onClick={() => setPreviewMode('tablet')}
-            className={`py-2 px-4 rounded-md text-sm font-semibold ${previewMode === 'tablet' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+            onClick={() => setPreviewWidth('w-full sm:max-w-md md:max-w-xl')} // Tablet width
+            className={`py-2 px-4 text-sm font-semibold ${previewWidth === 'w-full sm:max-w-md md:max-w-xl' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
           >
             Tablet
           </button>
           <button
-            onClick={() => setPreviewMode('mobile')}
-            className={`py-2 px-4 rounded-md text-sm font-semibold ${previewMode === 'mobile' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+            onClick={() => setPreviewWidth('w-full lg:max-w-3xl')} // Desktop width
+            className={`py-2 px-4 rounded-r-md text-sm font-semibold ${previewWidth === 'w-full lg:max-w-3xl' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
           >
-            Mobile
+            Desktop
           </button>
-        </div>
+        </div>}
       </div>
 
-      <div className={`bg-white rounded-lg p-6 ${getPreviewClasses()} transition-all duration-300`}>
-        <form onSubmit={handleSubmit}>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">{formTitle}</h1>
-          <p className="text-gray-600 mb-6">{formDescription}</p>
+      <div className={`mx-auto bg-white p-8 rounded-lg shadow-lg transition-all duration-300 ${previewWidth}`}>
+        <p className="text-gray-600 mb-6">{form.description}</p>
 
-          {/* Static Email Field */}
+        {/* Form Completion Progress Bar */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-medium text-gray-700">Form Completion</span>
+            <span className="text-sm font-medium text-blue-600">{progress}%</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div
+              className={`h-2.5 rounded-full transition-all duration-500 ease-out ${
+                progress === 100 
+                  ? 'bg-green-600' 
+                  : progress > 70 
+                    ? 'bg-blue-600' 
+                    : progress > 30 
+                      ? 'bg-yellow-400' 
+                      : 'bg-red-400'
+              }`}
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* Static Email Field: Ensure this also has a unique 'name' if you keep it */}
           <div className="mb-6">
-            <label htmlFor="emailField" className="block text-gray-700 text-lg font-semibold mb-1">
+            <label htmlFor="previewEmailField" className="block text-sm font-medium text-gray-700">
               Email <span className="text-red-500">*</span>
             </label>
             <input
-              id="emailField"
               type="email"
-              className={`w-full p-3 border rounded-md focus:border-blue-500 focus:ring-blue-500 outline-none text-gray-800 ${formErrors['emailField'] ? 'border-red-500' : 'border-gray-300'}`}
+              id="previewEmailField"
+              {...register("previewEmailField", {
+                required: "Email is required.",
+                pattern: {
+                  value: /^\S+@\S+\.\S+$/,
+                  message: "Please enter a valid email address.",
+                },
+              })}
+              className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.previewEmailField ? 'border-red-500' : 'border-gray-300'}`}
               placeholder="Valid email address"
-              value={formData['emailField'] || ''}
-              onChange={(e) => handleInputChange('emailField', e.target.value)}
-              required
             />
-            {formErrors['emailField'] && (
-              <p className="text-red-500 text-sm mt-1">{formErrors['emailField']}</p>
+            {errors.previewEmailField && (
+              <p className="text-red-500 text-xs mt-1">{errors.previewEmailField.message}</p>
             )}
           </div>
 
-          {/* Render Dynamic Questions */}
-          {questions.map(question => (
-            <div key={question.id} className="mb-6">
-              <label htmlFor={question.id} className="block text-gray-700 text-lg font-semibold mb-1">
-                {question.title} {question.required && <span className="text-red-500">*</span>}
-              </label>
-              {/* Render input based on question type */}
-              {question.type === 'short-answer' && (
-                <input
-                  id={question.id}
-                  type="text"
-                  className={`w-full p-3 border rounded-md focus:border-blue-500 focus:ring-blue-500 outline-none text-gray-800 ${formErrors[question.id] ? 'border-red-500' : 'border-gray-300'}`}
-                  placeholder="Short answer text"
-                  value={formData[question.id] || ''}
-                  onChange={(e) => handleInputChange(question.id, e.target.value, question.type)}
-                  required={question.required}
-                  minLength={question.minLength || undefined}
-                  maxLength={question.maxLength || undefined}
-                  pattern={question.pattern || undefined}
-                />
-              )}
-              {question.type === 'paragraph' && (
-                <textarea
-                  id={question.id}
-                  className={`w-full p-3 border rounded-md focus:border-blue-500 focus:ring-blue-500 outline-none text-gray-800 resize-y ${formErrors[question.id] ? 'border-red-500' : 'border-gray-300'}`}
-                  rows="4"
-                  placeholder="Long answer text"
-                  value={formData[question.id] || ''}
-                  onChange={(e) => handleInputChange(question.id, e.target.value, question.type)}
-                  required={question.required}
-                  minLength={question.minLength || undefined}
-                  maxLength={question.maxLength || undefined}
-                ></textarea>
-              )}
-              {question.type === 'date' && (
-                <input
-                  id={question.id}
-                  type="date"
-                  className={`w-full p-3 border rounded-md focus:border-blue-500 focus:ring-blue-500 outline-none text-gray-800 ${formErrors[question.id] ? 'border-red-500' : 'border-gray-300'}`}
-                  value={formData[question.id] || ''}
-                  onChange={(e) => handleInputChange(question.id, e.target.value, question.type)}
-                  required={question.required}
-                />
-              )}
-              {(question.type === 'multiple-choice' || question.type === 'radio') && (
-                <div>
-                  {question.options.map(option => (
-                    <label key={option.id} className="block mb-2 text-gray-700">
-                      <input
-                        type="radio"
-                        name={question.id}
-                        value={option.text}
-                        checked={formData[question.id] === option.text}
-                        onChange={(e) => handleInputChange(question.id, e.target.value, question.type)}
-                        className="mr-2 h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                        required={question.required && !formData[question.id]} // Apply required to at least one radio button if none selected
-                      />
-                      {option.text}
-                    </label>
-                  ))}
-                </div>
-              )}
-              {question.type === 'checkboxes' && (
-                <div>
-                  {question.options.map(option => (
-                    <label key={option.id} className="block mb-2 text-gray-700">
-                      <input
-                        type="checkbox"
-                        value={option.text}
-                        checked={(formData[question.id] || []).includes(option.text)}
-                        onChange={(e) => handleInputChange(question.id, e.target.value, question.type)}
-                        className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                      />
-                      {option.text}
-                    </label>
-                  ))}
-                </div>
-              )}
-              {question.type === 'dropdown' && (
-                <select
-                  id={question.id}
-                  className={`w-full p-3 border rounded-md focus:border-blue-500 focus:ring-blue-500 outline-none text-gray-800 ${formErrors[question.id] ? 'border-red-500' : 'border-gray-300'}`}
-                  value={formData[question.id] || ''}
-                  onChange={(e) => handleInputChange(question.id, e.target.value, question.type)}
-                  required={question.required}
-                >
-                  <option value="" disabled>Select an option</option>
-                  {question.options.map(option => (
-                    <option key={option.id} value={option.text}>
-                      {option.text}
-                    </option>
-                  ))}
-                </select>
-              )}
-
-              {/* Display error message */}
-              {formErrors[question.id] && (
-                <p className="text-red-500 text-sm mt-1">{formErrors[question.id]}</p>
-              )}
-            </div>
-          ))}
-
-          <div className="mt-6 text-center">
-            <button
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md shadow-lg transition-colors text-lg"
-            >
-              Submit Form (Preview)
-            </button>
-          </div>
+          {/* Dynamic form fields mapped from your form data */}
+          {form.fields.map(field => renderFormField(field, register, errors))}
+          <button
+            type="submit"
+            className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-semibold"
+          >
+            Submit Form
+          </button>
         </form>
       </div>
     </div>
   );
 }
-
-export default FormPreview;

@@ -176,9 +176,19 @@ export default function FormPreview({ formId: propFormId, isUserMode = false }) 
 
     // Get all form fields including the required email field
     const allFields = [
-      { name: 'previewEmailField', required: true },
-      ...form.fields
+      { name: 'previewEmailField', required: true }
     ];
+
+    form.fields.forEach(field => {
+        allFields.push({
+            name: field.id,
+            required: field.required,
+            minLength: field.minLength,
+            maxLength: field.maxLength,
+            pattern: field.pattern,
+            type: field.type,
+        });
+    });
 
     // Count total fields and valid fields according to requirements
     let validFieldCount = 0;

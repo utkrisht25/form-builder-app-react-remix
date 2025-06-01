@@ -1,5 +1,4 @@
 import { useSelector, useDispatch } from 'react-redux'; // Import Redux hooks
-import { IoCloseCircleOutline } from 'react-icons/io5';
 
 // Import actions from your formSlice
 import { updateOption, removeOption } from '../store/formSlice';

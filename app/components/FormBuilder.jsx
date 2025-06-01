@@ -12,6 +12,7 @@ import {
   updateQuestion,
   reorderQuestions,
 } from '../store/formSlice.js';
+import { formTemplates } from '../data/formTemplates';
 
 // Accept formId as a prop, with a fallback to useParams if not provided
 function FormBuilder({ formId: propFormId }) {
@@ -30,10 +31,28 @@ function FormBuilder({ formId: propFormId }) {
   const dragOverItem = useRef(null);
 
   useEffect(() => {
-    if (currentFormId) { // Use currentFormId here
+    if (currentFormId) {
       const forms = JSON.parse(localStorage.getItem('forms') || '[]');
-      const existingForm = forms.find(form => form.id === currentFormId); // Use currentFormId
+      const existingForm = forms.find(form => form.id === currentFormId);
       if (existingForm) {
+        // If it's a template-based form and we're loading it for the first time,
+        // make sure we have all the template questions
+        if (existingForm.isTemplate && existingForm.originalTemplate) {
+          const template = formTemplates[existingForm.originalTemplate];
+          if (template) {
+            // Ensure all template questions exist
+            const templateQuestionIds = template.fields.map(f => f.id);
+            const existingQuestionIds = existingForm.fields.map(f => f.id);
+            const missingTemplateQuestions = template.fields.filter(
+              f => !existingQuestionIds.includes(f.id)
+            );
+            
+            // Add any missing template questions at the beginning
+            if (missingTemplateQuestions.length > 0) {
+              existingForm.fields = [...missingTemplateQuestions, ...existingForm.fields];
+            }
+          }
+        }
         dispatch(setInitialForm(existingForm));
       } else {
         console.warn(`Form with ID ${currentFormId} not found. Navigating to new form.`);
@@ -42,7 +61,7 @@ function FormBuilder({ formId: propFormId }) {
     } else {
       dispatch(setInitialForm({ title: 'Untitled form', description: '', fields: [] }));
     }
-  }, [currentFormId, navigate, dispatch]); // Dependency array updated
+  }, [currentFormId, navigate, dispatch]);
 
 
   const handleCanvasDragOver = (e) => {
@@ -89,6 +108,7 @@ function FormBuilder({ formId: propFormId }) {
 
   const handleSaveForm = () => {
     let forms = JSON.parse(localStorage.getItem('forms') || '[]');
+    const currentForm = forms.find(f => f.id === currentFormId);
 
     const currentFormData = {
       title: formTitle,
@@ -96,29 +116,66 @@ function FormBuilder({ formId: propFormId }) {
       fields: questions,
     };
 
-    if (currentFormId) { // Use currentFormId here
-      const formIndex = forms.findIndex(form => form.id === currentFormId); // Use currentFormId
+    if (currentFormId) {
+      const formIndex = forms.findIndex(form => form.id === currentFormId);
       if (formIndex > -1) {
+        // Preserve template status and original template reference
         forms[formIndex] = {
           ...forms[formIndex],
           ...currentFormData,
           updatedAt: new Date().toISOString(),
+          // If it was a template form, ensure template questions remain
+          fields: currentForm?.isTemplate 
+            ? ensureTemplateQuestions(currentFormData.fields, forms[formIndex].originalTemplate)
+            : currentFormData.fields,
         };
         console.log('Form updated successfully!');
       } else {
         console.warn('Form not found for update, creating new one.');
         const newFormId = `form-${Date.now()}`;
-        forms.push({ ...currentFormData, id: newFormId, createdAt: new Date().toISOString() });
+        forms.push({ 
+          ...currentFormData, 
+          id: newFormId, 
+          createdAt: new Date().toISOString() 
+        });
         console.log('New form created as fallback!');
       }
     } else {
       const newFormId = `form-${Date.now()}`;
-      forms.push({ ...currentFormData, id: newFormId, createdAt: new Date().toISOString() });
+      forms.push({ 
+        ...currentFormData, 
+        id: newFormId, 
+        createdAt: new Date().toISOString() 
+      });
       console.log('New form saved successfully!');
     }
 
     localStorage.setItem('forms', JSON.stringify(forms));
     navigate('/');
+  };
+
+  // Helper function to ensure template questions are preserved
+  const ensureTemplateQuestions = (currentFields, templateType) => {
+    if (!templateType) return currentFields;
+    
+    const template = formTemplates[templateType];
+    if (!template) return currentFields;
+
+    // Get template question IDs
+    const templateQuestionIds = template.fields.map(f => f.id);
+    
+    // Filter out any existing template questions that were modified
+    const modifiedTemplateQuestions = currentFields.filter(
+      f => templateQuestionIds.includes(f.id)
+    );
+
+    // Get template questions that weren't modified
+    const unmodifiedTemplateQuestions = template.fields.filter(
+      f => !modifiedTemplateQuestions.find(mf => mf.id === f.id)
+    );
+
+    // Combine unmodified template questions with all current fields
+    return [...unmodifiedTemplateQuestions, ...currentFields];
   };
 
   const handleDeleteForm = () => {

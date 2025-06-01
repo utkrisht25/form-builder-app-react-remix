@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from '@remix-run/react';
 import { copyFormLink } from '../components/helper.jsx';
-import ThemeToggle from '../components/ThemeToggle.jsx'; // Adjust the import path as necessary
+import ThemeToggle from '../components/ThemeToggle.jsx';
+import { formTemplates } from '../data/formTemplates';
 
 export default function Index() {
   const [forms, setForms] = useState([]);
@@ -14,9 +15,43 @@ export default function Index() {
     setForms(storedForms);
   }, []);
 
+  // Handle form deletion
+  const handleDeleteForm = (formId) => {
+    if (window.confirm('Are you sure you want to delete this form?')) {
+      // Remove from localStorage
+      const storedForms = JSON.parse(localStorage.getItem('forms') || '[]');
+      const updatedForms = storedForms.filter(form => form.id !== formId);
+      localStorage.setItem('forms', JSON.stringify(updatedForms));
+      
+      // Update state to reflect changes
+      setForms(updatedForms);
+    }
+  };
+
   // Reverted: This function now creates a new form and navigates to its edit page
   const handleCreateNewForm = () => {
     navigate('/form-builder');
+  };
+
+  const handleTemplateSelect = (templateType) => {
+    const template = formTemplates[templateType];
+    if (!template) return;
+
+    // Create a new form based on the template
+    const newForm = {
+      ...template,
+      id: `form-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      isTemplate: true, // Flag to identify template-based forms
+      originalTemplate: templateType // Store the template type for future reference
+    };
+
+    // Save the new form
+    const storedForms = JSON.parse(localStorage.getItem('forms') || '[]');
+    localStorage.setItem('forms', JSON.stringify([...storedForms, newForm]));
+
+    // Navigate to the form editor
+    navigate(`/edit-form/${newForm.id}`);
   };
 
   return (
@@ -47,19 +82,34 @@ export default function Index() {
             </div>
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Blank form</h2>
           </div>
-          <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow">
+
+          {/* Contact Information Template */}
+          <div
+            className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => handleTemplateSelect('contact')}
+          >
             <div className="bg-green-200 dark:bg-green-800 rounded-full p-3 mb-3">
               <span className="text-green-800 dark:text-green-200 text-lg font-semibold">Template Preview</span>
             </div>
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Contact Information</h2>
           </div>
-          <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow">
+
+          {/* RSVP Template */}
+          <div
+            className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => handleTemplateSelect('rsvp')}
+          >
             <div className="bg-purple-200 dark:bg-purple-800 rounded-full p-3 mb-3">
               <span className="text-purple-800 dark:text-purple-200 text-lg font-semibold">Template Preview</span>
             </div>
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">RSVP</h2>
           </div>
-          <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow">
+
+          {/* Party Invite Template */}
+          <div
+            className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => handleTemplateSelect('partyInvite')}
+          >
             <div className="bg-yellow-200 dark:bg-yellow-800 rounded-full p-3 mb-3">
               <span className="text-yellow-800 dark:text-yellow-200 text-lg font-semibold">Template Preview</span>
             </div>
@@ -103,7 +153,7 @@ export default function Index() {
                   </Link>
                   <button
                     onClick={() => copyFormLink(form.id, setCopiedId)}
-                    className="relative text-purple-600 hover:underline font-medium flex items-center"
+                    className="relative text-purple-600 hover:underline font-medium flex items-center cursor-pointer"
                     aria-label="Copy form link"
                   >
                     <svg
@@ -126,6 +176,27 @@ export default function Index() {
                         Link copied!
                       </span>
                     )}
+                  </button>
+                  <button
+                    onClick={() => handleDeleteForm(form.id)}
+                    className="relative text-red-600 hover:underline font-medium flex items-center cursor-pointer"
+                    aria-label="Delete form"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 mr-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                    Delete
                   </button>
                 </div>
               </div>

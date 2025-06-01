@@ -7,10 +7,11 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 
-import { Provider } from 'react-redux';
-import { store } from './store/store';
-import "./tailwind.css";
-import { ThemeProvider } from "./context/ThemeContext";
+import { Provider } from 'react-redux'; // <<< THIS IS CRUCIAL
+import { store } from './store/store'; // <<< THIS IS CRUCIAL (ensure path is correct)
+
+import "./tailwind.css"; // Your main Tailwind CSS import
+import { ThemeProvider } from "./context/ThemeContext"; // Adjust the import path as necessary
 
 export function links() {
   return [];
@@ -25,7 +26,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="h-full transition-colors">
+      <body className="h-full">
         <ThemeProvider>
           <Provider store={store}>
             <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">

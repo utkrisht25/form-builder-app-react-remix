@@ -1,0 +1,1 @@
+import{e as o,j as t}from"./index-CpqSmuqB.js";import{F as m}from"./FormPreview-NJfCMEJw.js";import"./helper-BzBdq6gI.js";import"./ThemeToggle-DbCPRthF.js";import"./ThemeContext-CTV3qdSC.js";import"./components-CeugLcM5.js";function f(){const{formId:r}=o();return t.jsx(m,{formId:r,isUserMode:!0})}export{f as default};

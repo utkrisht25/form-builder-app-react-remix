@@ -1,0 +1,1 @@
+import{j as r}from"./index-CpqSmuqB.js";import{F as i}from"./FormBuilder-DpTJ2LLr.js";import"./formSlice-rzx5E_LX.js";import"./ThemeToggle-DbCPRthF.js";import"./ThemeContext-CTV3qdSC.js";import"./formTemplates-uoGO9qH-.js";function p(){return r.jsx("div",{className:"min-h-screen bg-gray-100",children:r.jsx(i,{})})}export{p as default};

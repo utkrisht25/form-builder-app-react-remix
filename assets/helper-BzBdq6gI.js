@@ -1,0 +1,1 @@
+const i=(o,r)=>{const t=`${window.location.origin}/form/${o}`;navigator.clipboard.writeText(t).then(()=>{r(o),setTimeout(()=>r(null),2e3)}).catch(l=>{console.error("Failed to copy form link:",l),alert("Failed to copy link to clipboard")})};export{i as c};

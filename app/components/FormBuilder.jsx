@@ -106,53 +106,78 @@ function FormBuilder({ formId: propFormId }) {
     }
   };
 
-  const handleSaveForm = () => {
-    let forms = JSON.parse(localStorage.getItem('forms') || '[]');
-    const currentForm = forms.find(f => f.id === currentFormId);
+  const saveFormToStorage = () => {
+    try {
+      let forms = JSON.parse(localStorage.getItem('forms') || '[]');
+      const currentForm = forms.find(f => f.id === currentFormId);
 
-    const currentFormData = {
-      title: formTitle,
-      description: formDescription,
-      fields: questions,
-    };
+      const currentFormData = {
+        title: formTitle,
+        description: formDescription,
+        fields: questions,
+      };
 
-    if (currentFormId) {
-      const formIndex = forms.findIndex(form => form.id === currentFormId);
-      if (formIndex > -1) {
-        // Preserve template status and original template reference
-        forms[formIndex] = {
-          ...forms[formIndex],
-          ...currentFormData,
-          updatedAt: new Date().toISOString(),
-          // If it was a template form, ensure template questions remain
-          fields: currentForm?.isTemplate 
-            ? ensureTemplateQuestions(currentFormData.fields, forms[formIndex].originalTemplate)
-            : currentFormData.fields,
-        };
-        console.log('Form updated successfully!');
+      let newFormId = currentFormId;
+
+      if (currentFormId) {
+        const formIndex = forms.findIndex(form => form.id === currentFormId);
+        if (formIndex > -1) {
+          // Preserve template status and original template reference
+          forms[formIndex] = {
+            ...forms[formIndex],
+            ...currentFormData,
+            updatedAt: new Date().toISOString(),
+            // If it was a template form, ensure template questions remain
+            fields: currentForm?.isTemplate
+              ? ensureTemplateQuestions(currentFormData.fields, forms[formIndex].originalTemplate)
+              : currentFormData.fields,
+          };
+          console.log('Form updated successfully!');
+        } else {
+          console.warn('Form not found for update, creating new one.');
+          newFormId = `form-${Date.now()}`;
+          forms.push({
+            ...currentFormData,
+            id: newFormId,
+            createdAt: new Date().toISOString()
+          });
+          console.log('New form created as fallback!');
+        }
       } else {
-        console.warn('Form not found for update, creating new one.');
-        const newFormId = `form-${Date.now()}`;
-        forms.push({ 
-          ...currentFormData, 
-          id: newFormId, 
-          createdAt: new Date().toISOString() 
+        newFormId = `form-${Date.now()}`;
+        forms.push({
+          ...currentFormData,
+          id: newFormId,
+          createdAt: new Date().toISOString()
         });
-        console.log('New form created as fallback!');
+        console.log('New form saved successfully!');
       }
-    } else {
-      const newFormId = `form-${Date.now()}`;
-      forms.push({ 
-        ...currentFormData, 
-        id: newFormId, 
-        createdAt: new Date().toISOString() 
-      });
-      console.log('New form saved successfully!');
-    }
 
-    localStorage.setItem('forms', JSON.stringify(forms));
-    navigate('/');
+      localStorage.setItem('forms', JSON.stringify(forms));
+      return { success: true, formId: newFormId };
+    } catch (error) {
+      console.error('Error saving form:', error);
+      return { success: false, error: error.message };
+    }
   };
+
+  const handleSaveForm = () => {
+    const result = saveFormToStorage();
+    if (result.success) {
+      navigate('/');
+    } else {
+      console.error('Failed to save form:', result.error);
+    }
+  };
+
+  const handlePreview=()=>  {
+    const result = saveFormToStorage();
+    if (result.success) {
+      navigate(`/form-preview/${result.formId}`);
+    } else {
+      console.error('Failed to save form:', result.error);
+    }
+  }
 
   // Helper function to ensure template questions are preserved
   const ensureTemplateQuestions = (currentFields, templateType) => {
@@ -187,6 +212,7 @@ function FormBuilder({ formId: propFormId }) {
       navigate('/');
     }
   };
+
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -244,7 +270,7 @@ function FormBuilder({ formId: propFormId }) {
                 Save Form
               </button>
               <button
-                onClick={() => navigate(`/form-preview/${currentFormId}`)}
+                onClick={handlePreview}
                 className="px-6 py-2 bg-green-600 dark:bg-green-500 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors"
               >
                 Preview
@@ -260,3 +286,4 @@ function FormBuilder({ formId: propFormId }) {
 export default FormBuilder;
 // Note: Ensure that the Redux store and actions are correctly set up in your application.
 // This code assumes you have a Redux store set up with the necessary actions and reducers.
+

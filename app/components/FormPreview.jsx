@@ -187,8 +187,8 @@ export default function FormPreview({ formId: propFormId, isUserMode = false }) 
             maxLength: field.maxLength,
             pattern: field.pattern,
             type: field.type,
-        });
-    });
+        });
+    });
 
     // Count total fields and valid fields according to requirements
     let validFieldCount = 0;

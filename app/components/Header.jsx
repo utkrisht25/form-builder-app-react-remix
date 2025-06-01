@@ -1,17 +1,21 @@
 import React from 'react';
+import { Link } from '@remix-run/react';
+import ThemeToggle from './ThemeToggle';
 
 function Header() {
   // Placeholder for user login status and profile
   const userLoggedIn = true; // Set to true for now to show profile icon
 
   return (
-    <header className="bg-white shadow-md p-4 flex items-center justify-between">
+    <header className="bg-white dark:bg-gray-800 shadow-md transition-colors p-4 flex items-center justify-between">
       <div className="flex items-center">
         {/* Logo (Placeholder) */}
         <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-2">
           FB
         </div>
-        <h1 className="text-xl font-semibold text-gray-800">Form Builder</h1>
+        <h1 className="text-xl font-semibold text-gray-800 dark:text-white transition-colors">
+          Form Builder
+        </h1>
       </div>
 
       <div className="flex items-center">
@@ -33,6 +37,17 @@ function Header() {
             Log In
           </button>
         )}
+      </div>
+
+      <div className="flex items-center space-x-4">
+        <ThemeToggle />
+        <Link
+          to="/form-builder"
+          className="bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-lg 
+                     hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
+        >
+          Create Form
+        </Link>
       </div>
     </header>
   );

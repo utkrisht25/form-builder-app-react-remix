@@ -4,44 +4,40 @@ import React from 'react';
 export const questionTypes = [
   { id: 'short-answer', label: 'Short answer' },
   { id: 'paragraph', label: 'Paragraph' },
-  { id: 'multiple-choice', label: 'Multiple choice' },
+  { id: 'multiple-choice', label: 'Multiple Choice' },
   { id: 'checkboxes', label: 'Checkboxes' },
   { id: 'dropdown', label: 'Drop-down' },
   { id: 'date', label: 'Date' },
-  { id: 'radio', label: 'Radio Button' },
+  { id: 'radio', label: 'Radio' },
 ];
 
-function QuestionHeader({ title, type, onTitleChange, onTypeChange }) {
+function QuestionHeader({ title, type, onTitleChange, onTypeChange, onRemove }) {
   return (
-    <div className="flex justify-between items-start mb-4">
-      {/* Question Title Input */}
-      <input
-        type="text"
-        className="text-lg font-semibold text-gray-800 p-2 border-b-2 border-transparent focus:border-blue-500 outline-none flex-grow mr-4"
-        value={title}
-        onChange={onTitleChange}
-        placeholder="Untitled Question"
-      />
+    <div className="flex items-start justify-between mb-4">
+      <div className="flex-1 mr-4">
+        {/* Question Title Input */}
+        <input
+          type="text"          value={title || ''}
+          onChange={onTitleChange}
+          placeholder="Question Title"
+          className="w-full text-lg font-semibold mb-2 p-2 border-b-2 border-transparent focus:border-blue-500 focus:outline-none bg-transparent dark:text-white transition-colors"
+        />
 
-      {/* Question Type Selector */}
-      <div className="relative inline-block text-gray-700">
+        {/* Question Type Selector */}
         <select
-          className="block appearance-none w-full bg-gray-100 border border-gray-200 text-gray-700 py-2 px-4 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
           value={type}
           onChange={onTypeChange}
+          className="text-sm px-3 py-1.5 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
         >
-          {questionTypes.map((qType) => (
-            <option key={qType.id} value={qType.id}>
-              {qType.label}
+          {questionTypes.map((questionType) => (
+            <option key={questionType.id} value={questionType.id}>
+              {questionType.label}
             </option>
           ))}
         </select>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-          <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-          </svg>
-        </div>
       </div>
+
+      
     </div>
   );
 }

@@ -1,4 +1,3 @@
-
 import { useSelector , useDispatch } from 'react-redux';
 import { IoMoveOutline } from 'react-icons/io5'; // IoTrashOutline moved to QuestionFooter
 
@@ -83,7 +82,7 @@ function QuestionComponent({
 
   return (
     <div
-      className="bg-white shadow-md rounded-lg p-6 mb-4 border border-gray-300 relative group"
+      className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mb-4 border border-gray-300 relative group"
       draggable
       onDragStart={(e) => onDragStart(e, index)}
       onDragOver={(e) => onDragOver(e, index)}

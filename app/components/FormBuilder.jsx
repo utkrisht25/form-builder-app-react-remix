@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useParams } from '@remix-run/react';
 import { useSelector, useDispatch } from 'react-redux';
-
+import ThemeToggle from './ThemeToggle';
 import FieldTypes from './FieldTypes';
 import FormCanvas from './FormCanvas';
 import {
@@ -11,7 +11,7 @@ import {
   removeQuestion,
   updateQuestion,
   reorderQuestions,
-} from '../store/formSlice.js'; // Ensure this path is correct
+} from '../store/formSlice.js';
 
 // Accept formId as a prop, with a fallback to useParams if not provided
 function FormBuilder({ formId: propFormId }) {
@@ -132,79 +132,69 @@ function FormBuilder({ formId: propFormId }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row">
-        <aside className="w-full md:w-64 bg-white shadow-md rounded-lg p-4 mb-4 md:mb-0 md:mr-4 flex-shrink-0">
-          <h2 className="text-lg font-semibold mb-4 text-gray-800">Drag to Add</h2>
-          <FieldTypes />
-        </aside>
-
-        <main className="flex-1 min-w-0">
-          <div className="bg-white shadow-md rounded-lg p-6 mb-4">
-            <input
-              type="text"
-              className="text-3xl font-bold text-gray-800 mb-2 p-2 border-b-2 border-transparent focus:border-blue-500 outline-none w-full"
-              value={formTitle}
-              onChange={(e) => dispatch(updateFormDetails({ title: e.target.value }))}
-              placeholder="Untitled form"
-            />
-            <textarea
-              className="w-full p-2 border-b-2 border-transparent focus:border-blue-500 outline-none text-gray-600 resize-none"
-              rows="1"
-              value={formDescription}
-              onChange={(e) => dispatch(updateFormDetails({ description: e.target.value }))}
-              placeholder="Form description"
-            />
+    <div className="container mx-auto px-4 py-8">
+      <ThemeToggle />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {/* Field Types Section */}
+        <div className="md:col-span-1">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transition-colors">
+            <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white transition-colors">Form Elements</h2>
+            <FieldTypes />
           </div>
+        </div>
 
-          <div className="bg-white shadow-md rounded-lg p-6 mb-4 border border-gray-300">
-            <label className="block text-gray-700 text-lg font-semibold mb-1">
-              Email <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="email"
-              className="w-full p-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none text-gray-800"
-              placeholder="Valid email address"
-              readOnly
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              This form is collecting email addresses. <span className="text-blue-600 cursor-pointer">Change settings</span>
-            </p>
-          </div>
-
-          <FormCanvas
+        {/* Form Canvas Section */}
+        <div className="md:col-span-3">
+          <div 
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-h-[600px] transition-colors"
             onDragOver={handleCanvasDragOver}
             onDrop={handleCanvasDrop}
-            onQuestionDragStart={handleQuestionDragStart}
-            onQuestionDragOver={handleQuestionDragOver}
-            onQuestionDrop={handleQuestionDrop}
-          />
+          >
+            {/* Form Title Input */}
+            <input
+              type="text"
+              value={formTitle}
+              onChange={(e) => dispatch(updateFormDetails({ title: e.target.value }))}
+              placeholder="Form Title"
+              className="w-full text-3xl font-bold mb-4 p-2 border-b-2 border-transparent focus:border-blue-500 focus:outline-none bg-transparent dark:text-white transition-colors"
+            />
 
-          <div className="mt-6 flex justify-end gap-4">
-            {currentFormId && ( // Use currentFormId here
-              <>
-                <button
-                  onClick={() => navigate(`/form-preview/${currentFormId}`)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-md shadow-lg transition-colors text-lg"
-                >
-                  Preview Form
-                </button>
-                <button
-                  onClick={handleDeleteForm}
-                  className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-md shadow-lg transition-colors text-lg"
-                >
-                  Delete Form
-                </button>
-              </>
-            )}
-            <button
-              onClick={handleSaveForm}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md shadow-lg transition-colors text-lg"
-            >
-              {currentFormId ? 'Update Form' : 'Save New Form'}
-            </button>
+            {/* Form Description Input */}
+            <textarea
+              value={formDescription}
+              onChange={(e) => dispatch(updateFormDetails({ description: e.target.value }))}
+              placeholder="Form Description"
+              className="w-full text-gray-600 dark:text-gray-300 mb-8 p-2 border-b-2 border-transparent focus:border-blue-500 focus:outline-none bg-transparent resize-none transition-colors"
+              rows="2"
+            />
+
+            {/* Form Canvas for Questions */}
+            <FormCanvas
+              questions={questions}
+              onQuestionDragStart={handleQuestionDragStart}
+              onQuestionDragOver={handleQuestionDragOver}
+              onQuestionDrop={handleQuestionDrop}
+              onUpdateQuestion={(id, updates) => dispatch(updateQuestion({ id, updates }))}
+              onRemoveQuestion={(id) => dispatch(removeQuestion(id))}
+            />
+
+            {/* Save and Preview Buttons */}
+            <div className="flex justify-end space-x-4 mt-8">
+              <button
+                onClick={handleSaveForm}
+                className="px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
+              >
+                Save Form
+              </button>
+              <button
+                onClick={() => navigate(`/form-preview/${currentFormId}`)}
+                className="px-6 py-2 bg-green-600 dark:bg-green-500 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors"
+              >
+                Preview
+              </button>
+            </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

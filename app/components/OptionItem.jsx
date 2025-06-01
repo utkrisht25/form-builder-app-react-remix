@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSelector, useDispatch } from 'react-redux'; // Import Redux hooks
 import { IoCloseCircleOutline } from 'react-icons/io5';
 
@@ -51,7 +50,6 @@ function OptionItem({ questionId, optionId, type }) { // Now receives questionId
           onClick={handleDeleteOption}
           className="text-gray-500 hover:text-red-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
         >
-          <IoCloseCircleOutline size={20} />
         </button>
       )}
     </div>

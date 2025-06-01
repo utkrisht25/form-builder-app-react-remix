@@ -17,12 +17,14 @@ function FormCanvas({
 
   return (
     <div
-      className="min-h-96 border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50"
+      className="min-h-96 border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 dark:border-gray-600 dark:bg-gray-800"
       onDragOver={onDragOver} // For new field types from sidebar
       onDrop={onDrop}         // For new field types from sidebar
     >
       {questions.length === 0 ? (
-        <p className="text-gray-500 text-center py-10">Drag and drop form fields here to add questions</p>
+        <p className="text-gray-500 text-center py-10 dark:text-gray-400">
+          Drag and drop form fields here to add questions
+        </p>
       ) : (
         questions.map((question, index) => (
           <QuestionComponent

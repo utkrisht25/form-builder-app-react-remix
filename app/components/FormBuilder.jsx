@@ -205,7 +205,8 @@ function FormBuilder({ formId: propFormId }) {
 
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-800 transition-colors">
+    <div className="container mx-auto px-4 py-8 dark:bg-gray-900 transition-colors">
       <ThemeToggle />
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Field Types Section */}
@@ -237,7 +238,7 @@ function FormBuilder({ formId: propFormId }) {
               value={formDescription}
               onChange={(e) => dispatch(updateFormDetails({ description: e.target.value }))}
               placeholder="Form Description"
-              className="w-full text-gray-600 dark:text-gray-300 mb-8 p-2 border-b-2 border-transparent focus:border-blue-500 focus:outline-none bg-transparent resize-none transition-colors"
+              className="w-full text-gray-600 dark:text-white mb-8 p-2 border-b-2 border-transparent focus:border-blue-500 focus:outline-none bg-transparent resize-none transition-colors"
               rows="2"
             />
 
@@ -269,6 +270,7 @@ function FormBuilder({ formId: propFormId }) {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

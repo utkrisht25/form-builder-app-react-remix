@@ -20,14 +20,14 @@ const renderFormField = (field, register, errors) => {
     case 'short-answer':
       return (
         <div key={id} className="mb-4">
-          <label htmlFor={fieldName} className="block text-sm font-medium text-gray-700">
+          <label htmlFor={fieldName} className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             {title} {required && <span className="text-red-500">*</span>}
           </label>
           <input
             type="text"
             id={fieldName}
             {...register(fieldName, validationRules)}
-            className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors[fieldName] ? 'border-red-500' : 'border-gray-300'}`}
+            className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors[fieldName] ? 'border-red-500' : '' } dark:bg-gray-700 dark:text-white dark:border-none`}
           />
           {errors[fieldName] && <p className="text-red-500 text-xs mt-1">{errors[fieldName].message}</p>}
         </div>
@@ -35,14 +35,14 @@ const renderFormField = (field, register, errors) => {
     case 'paragraph':
       return (
         <div key={id} className="mb-4">
-          <label htmlFor={fieldName} className="block text-sm font-medium text-gray-700">
+          <label htmlFor={fieldName} className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             {title} {required && <span className="text-red-500">*</span>}
           </label>
           <textarea
             id={fieldName}
             rows="3"
             {...register(fieldName, validationRules)}
-            className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors[fieldName] ? 'border-red-500' : 'border-gray-300'}`}
+            className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors[fieldName] ? 'border-red-500' : ''} dark:bg-gray-700 dark:text-white dark:border-none`}
           ></textarea>
           {errors[fieldName] && <p className="text-red-500 text-xs mt-1">{errors[fieldName].message}</p>}
         </div>
@@ -51,7 +51,7 @@ const renderFormField = (field, register, errors) => {
     case 'radio':
       return (
         <div key={id} className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
             {title} {required && <span className="text-red-500">*</span>}
           </label>
           {options.map(option => (
@@ -61,9 +61,9 @@ const renderFormField = (field, register, errors) => {
                 id={`${fieldName}-${option.id}`}
                 value={option.text}
                 {...register(fieldName, { required: required && "Please select an option." })}
-                className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                className="focus:ring-blue-500 h-4 w-4 text-blue-600  dark:bg-gray-700 dark:text-white rounded"
               />
-              <label htmlFor={`${fieldName}-${option.id}`} className="ml-2 block text-sm text-gray-900">
+              <label htmlFor={`${fieldName}-${option.id}`} className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
                 {option.text}
               </label>
             </div>
@@ -74,7 +74,7 @@ const renderFormField = (field, register, errors) => {
     case 'checkboxes':
       return (
         <div key={id} className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
             {title} {required && <span className="text-red-500">*</span>}
           </label>
           {options.map(option => (
@@ -89,9 +89,9 @@ const renderFormField = (field, register, errors) => {
                     return isAnyChecked || "Please select at least one option.";
                   } : undefined
                 })}
-                className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded dark:bg-gray-700 dark:text-white"
               />
-              <label htmlFor={`${fieldName}-${option.id}`} className="ml-2 block text-sm text-gray-900">
+              <label htmlFor={`${fieldName}-${option.id}`} className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
                 {option.text}
               </label>
             </div>
@@ -102,13 +102,13 @@ const renderFormField = (field, register, errors) => {
     case 'dropdown':
       return (
         <div key={id} className="mb-4">
-          <label htmlFor={fieldName} className="block text-sm font-medium text-gray-700">
+          <label htmlFor={fieldName} className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             {title} {required && <span className="text-red-500">*</span>}
           </label>
           <select
             id={fieldName}
             {...register(fieldName, validationRules)}
-            className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors[fieldName] ? 'border-red-500' : 'border-gray-300'}`}
+            className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors[fieldName] ? 'border-red-500' : 'border-gray-300'} dark:bg-gray-700 dark:text-white dark:border-none`}
           >
             <option value="">Select an option</option>
             {options.map(option => (
@@ -123,14 +123,14 @@ const renderFormField = (field, register, errors) => {
     case 'date':
       return (
         <div key={id} className="mb-4">
-          <label htmlFor={fieldName} className="block text-sm font-medium text-gray-700">
+          <label htmlFor={fieldName} className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             {title} {required && <span className="text-red-500">*</span>}
           </label>
           <input
             type="date"
             id={fieldName}
             {...register(fieldName, validationRules)}
-            className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors[fieldName] ? 'border-red-500' : 'border-gray-300'}`}
+            className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors[fieldName] ? 'border-red-500' : 'border-gray-300'} dark:bg-gray-700 dark:text-white dark:border-none`}
           />
           {errors[fieldName] && <p className="text-red-500 text-xs mt-1">{errors[fieldName].message}</p>}
         </div>
@@ -299,8 +299,8 @@ export default function FormPreview({ formId: propFormId, isUserMode = false }) 
     return <div className="text-center p-8 text-gray-600">Loading form or form not found...</div>;
   }
 
-  return (
-    <div className="min-h-screen bg-gray-100 p-8">
+  return (   
+     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8">
       <ThemeToggle />
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         {!isUserMode && (
@@ -327,15 +327,14 @@ export default function FormPreview({ formId: propFormId, isUserMode = false }) 
             </button>
           </div>
         )}
-      </div>      <div className={`mx-auto bg-white p-8 rounded-lg shadow-lg transition-all duration-300 ${previewWidth}`}>
-        <h1 className="text-3xl font-bold text-gray-900 text-center sm:text-left">{form?.title || 'Loading...'}</h1>
-        <p className="text-gray-600 mb-6">{form.description}</p>
+      </div>      <div className={`mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg transition-all duration-300 ${previewWidth}`}>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white text-center sm:text-left">{form?.title || 'Loading...'}</h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">{form.description}</p>
 
         {/* Form Completion Progress Bar */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-700">Form Completion</span>
-            <span className="text-sm font-medium text-blue-600">{progress}%</span>
+        <div className="mb-8">          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Form Completion</span>
+            <span className="text-sm font-medium text-blue-600 dark:text-blue-400">{progress}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div
@@ -362,7 +361,7 @@ export default function FormPreview({ formId: propFormId, isUserMode = false }) 
           <form onSubmit={handleSubmit(onSubmit)} key={form.id}>
             {/* Email field */}
             <div className="mb-6">
-              <label htmlFor="previewEmailField" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="previewEmailField" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Email <span className="text-red-500">*</span>
               </label>
               <input
@@ -375,7 +374,7 @@ export default function FormPreview({ formId: propFormId, isUserMode = false }) 
                     message: "Please enter a valid email address.",
                   },
                 })}
-                className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.previewEmailField ? 'border-red-500' : 'border-gray-300'
+                className={`mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.previewEmailField ? 'border-red-500' : 'border-gray-300'} dark:border-gray-600 dark:focus:ring-blue-500 dark:bg-gray-700 dark:text-white
                   }`}
                 placeholder="Valid email address"
               />

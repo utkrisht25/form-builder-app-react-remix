@@ -24,7 +24,7 @@ function QuestionBody({ question, onUpdate }) {
                 ? 'Long answer text'
                 : 'Answer'
             }
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed transition-colors"
+            className="w-full p-2 border border-gray-300  rounded-md bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed transition-colors"
           />
         </div>
       )}

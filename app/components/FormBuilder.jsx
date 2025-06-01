@@ -203,16 +203,6 @@ function FormBuilder({ formId: propFormId }) {
     return [...unmodifiedTemplateQuestions, ...currentFields];
   };
 
-  const handleDeleteForm = () => {
-    if (window.confirm("Are you sure you want to delete this form?")) {
-      let forms = JSON.parse(localStorage.getItem('forms') || '[]');
-      const updatedForms = forms.filter(form => form.id !== currentFormId); // Use currentFormId
-      localStorage.setItem('forms', JSON.stringify(updatedForms));
-      console.log('Form deleted successfully!');
-      navigate('/');
-    }
-  };
-
 
   return (
     <div className="container mx-auto px-4 py-8">

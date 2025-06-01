@@ -4,11 +4,10 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "deployToGitHub": "npm run build && gh-pages -d build/client",
-    "build": "remix vite:build",
-    "dev": "remix vite:dev",
+    "build": "remix build",
+    "dev": "remix dev",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
-    "start": "remix-serve ./build/server/index.js",
+    "start": "netlify dev",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -46,6 +45,5 @@
   },
   "engines": {
     "node": ">=20.0.0"
-  },
-  "homepage": "https://utkrisht25.github.io/form-builder-app-react-remix/"
+  }
 }

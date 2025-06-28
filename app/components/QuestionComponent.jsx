@@ -1,5 +1,6 @@
 import { useSelector , useDispatch } from 'react-redux';
 import { IoMoveOutline } from 'react-icons/io5'; // IoTrashOutline moved to QuestionFooter
+import { useState, useRef } from 'react';
 
 // Import new sub-components from the 'Question' folder
 import QuestionHeader from './Question/QuestionHeader';
@@ -19,17 +20,52 @@ function QuestionComponent({
   onDragStart,
   onDragOver,
   onDrop,
-  index
+  index,
+  onMoveUp,
+  onMoveDown,
+  totalQuestions
 }) {
   const dispatch = useDispatch();
+  const [isTouching, setIsTouching] = useState(false);
+  const touchTimeout = useRef(null);
 
   const question = useSelector((state) => state.form.questions.find(q => q.id === questionId));
 
   if (!question) {
     return null;
   }
-  // Destructure all necessary properties from the question object
+
   const { id, title, type, required, options = [], minLength, maxLength, pattern } = question;
+
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+    // Set a timeout to differentiate between tap and long press
+    touchTimeout.current = setTimeout(() => {
+      setIsTouching(true);
+    }, 500); // 500ms delay for long press
+  };
+
+  const handleTouchEnd = (e) => {
+    e.preventDefault();
+    clearTimeout(touchTimeout.current);
+    setIsTouching(false);
+  };
+
+  const handleTouchMove = (e) => {
+    if (isTouching) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
+      const targetQuestion = elements.find(el => el.hasAttribute('data-question-index'));
+      
+      if (targetQuestion) {
+        const targetIndex = parseInt(targetQuestion.getAttribute('data-question-index'));
+        if (targetIndex !== index) {
+          onDrop(e, targetIndex);
+        }
+      }
+    }
+  };
 
   // Handlers to be passed down to sub-components, dispatching Redux actions
   const handleTitleChange = (e) => {
@@ -88,8 +124,28 @@ function QuestionComponent({
       onDragOver={(e) => onDragOver(e, index)}
       onDrop={(e) => onDrop(e, index)}
     >
-      {/* Drag handle */}
-      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gray-200 rounded-full p-1 cursor-grab opacity-0 group-hover:opacity-100 transition-opacity z-10">
+      {/* Mobile up/down arrows for reordering */}
+      <div className="flex flex-col gap-1 absolute right-2 top-2 md:hidden z-20">
+        <button
+          aria-label="Move up"
+          onClick={() => onMoveUp(index)}
+          disabled={index === 0}
+          className="p-1 rounded bg-gray-200 dark:bg-gray-700 disabled:opacity-50"
+        >▲</button>
+        <button
+          aria-label="Move down"
+          onClick={() => onMoveDown(index)}
+          disabled={index === (totalQuestions - 1)}
+          className="p-1 rounded bg-gray-200 dark:bg-gray-700 disabled:opacity-50"
+        >▼</button>
+      </div>
+      {/* Drag handle (desktop only) */}
+      <div
+        className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gray-200 rounded-full p-1 cursor-grab opacity-0 group-hover:opacity-100 transition-opacity z-10 md:block hidden"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
+      >
         <IoMoveOutline size={18} className="text-gray-600" />
       </div>
 

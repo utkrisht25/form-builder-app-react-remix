@@ -203,6 +203,17 @@ function FormBuilder({ formId: propFormId }) {
     return [...unmodifiedTemplateQuestions, ...currentFields];
   };
 
+  const handleAddField = (fieldType) => {
+    dispatch(addQuestion({
+      id: `q-${Date.now()}-${Math.random()}`,
+      title: 'Untitled Question',
+      type: fieldType,
+      required: false,
+      options: (fieldType === 'multiple-choice' || fieldType === 'checkboxes' || fieldType === 'dropdown' || fieldType === 'radio')
+        ? [{ id: `opt-${Date.now()}-1`, text: 'Option 1' }]
+        : [],
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-800 transition-colors">
@@ -213,7 +224,13 @@ function FormBuilder({ formId: propFormId }) {
         <div className="md:col-span-1">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transition-colors">
             <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white transition-colors">Form Elements</h2>
-            <FieldTypes />
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 md:hidden">
+              Tap a field type to add it to your form
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 hidden md:block">
+              Drag and drop fields to add them to your form
+            </p>
+            <FieldTypes onAddField={handleAddField} />
           </div>
         </div>
 

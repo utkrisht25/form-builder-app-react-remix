@@ -10,33 +10,35 @@ import {
 import { Provider } from 'react-redux'; // <<< THIS IS CRUCIAL
 import { store } from './store/store'; // <<< THIS IS CRUCIAL (ensure path is correct)
 
-import stylesheet from "./tailwind.css"; // Your main Tailwind CSS import
+import "./tailwind.css"; // Your main Tailwind CSS import
 import { ThemeProvider } from "./context/ThemeContext"; // Adjust the import path as necessary
 
 export function links() {
-  return [{ rel: "stylesheet", href: stylesheet }];
+  return [];
 }
 
 export default function App() {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body className="h-full">
+      <body>
+        {/*
+          CRITICAL: The <Outlet /> (which renders your routes and thus your FormBuilder)
+          MUST BE WRAPPED INSIDE THE <Provider store={store}> component.
+        */}
         <ThemeProvider>
           <Provider store={store}>
-            <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
-              <Outlet />
-              <ScrollRestoration />
-              <Scripts />
-              <LiveReload />
-            </div>
+            <Outlet />
           </Provider>
+        <ScrollRestoration />
+        <Scripts />
         </ThemeProvider>
+        <LiveReload />
       </body>
     </html>
   );

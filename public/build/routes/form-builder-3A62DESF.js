@@ -1,12 +1,11 @@
 import {
-  FormPreview
-} from "/build/_shared/chunk-SXFM52LL.js";
-import "/build/_shared/chunk-W3HJSYIN.js";
+  FormBuilder_default
+} from "/build/_shared/chunk-JFPFDC5N.js";
+import "/build/_shared/chunk-JCIKCEJC.js";
+import "/build/_shared/chunk-3W5JBBFO.js";
 import "/build/_shared/chunk-HW4NUVRA.js";
 import "/build/_shared/chunk-WH7AQ3C7.js";
-import {
-  useParams
-} from "/build/_shared/chunk-D376OADO.js";
+import "/build/_shared/chunk-PCEBSVQY.js";
 import {
   createHotContext
 } from "/build/_shared/chunk-P6OU7LJU.js";
@@ -20,7 +19,7 @@ import {
   __toESM
 } from "/build/_shared/chunk-PNG5AS42.js";
 
-// app/routes/form-preview.$formId.jsx
+// app/routes/form-builder.jsx
 var import_jsx_dev_runtime = __toESM(require_jsx_dev_runtime(), 1);
 if (!window.$RefreshReg$ || !window.$RefreshSig$ || !window.$RefreshRuntime$) {
   console.warn("remix:hmr: React Fast Refresh only works when the Remix compiler is running in development mode.");
@@ -28,40 +27,37 @@ if (!window.$RefreshReg$ || !window.$RefreshSig$ || !window.$RefreshRuntime$) {
   prevRefreshReg = window.$RefreshReg$;
   prevRefreshSig = window.$RefreshSig$;
   window.$RefreshReg$ = (type, id) => {
-    window.$RefreshRuntime$.register(type, '"app\\\\routes\\\\form-preview.$formId.jsx"' + id);
+    window.$RefreshRuntime$.register(type, '"app\\\\routes\\\\form-builder.jsx"' + id);
   };
   window.$RefreshSig$ = window.$RefreshRuntime$.createSignatureFunctionForTransform;
 }
 var prevRefreshReg;
 var prevRefreshSig;
-var _s = $RefreshSig$();
 if (import.meta) {
   import.meta.hot = createHotContext(
     //@ts-expect-error
-    "app\\routes\\form-preview.$formId.jsx"
+    "app\\routes\\form-builder.jsx"
   );
-  import.meta.hot.lastModified = "1748797210392.1704";
+  import.meta.hot.lastModified = "1748797210382.5815";
 }
-function FormPreviewRoute() {
-  _s();
-  const {
-    formId
-  } = useParams();
-  return /* @__PURE__ */ (0, import_jsx_dev_runtime.jsxDEV)(FormPreview, { formId, isUserMode: false }, void 0, false, {
-    fileName: "app/routes/form-preview.$formId.jsx",
-    lineNumber: 29,
+function FormBuilderPage() {
+  return /* @__PURE__ */ (0, import_jsx_dev_runtime.jsxDEV)("div", { className: "min-h-screen bg-gray-100", children: /* @__PURE__ */ (0, import_jsx_dev_runtime.jsxDEV)(FormBuilder_default, {}, void 0, false, {
+    fileName: "app/routes/form-builder.jsx",
+    lineNumber: 25,
+    columnNumber: 11
+  }, this) }, void 0, false, {
+    fileName: "app/routes/form-builder.jsx",
+    lineNumber: 24,
     columnNumber: 10
   }, this);
 }
-_s(FormPreviewRoute, "vD5o/dR4M8CGQWCLPy2oL2jh/IQ=", false, function() {
-  return [useParams];
-});
-_c = FormPreviewRoute;
+_c = FormBuilderPage;
+var form_builder_default = FormBuilderPage;
 var _c;
-$RefreshReg$(_c, "FormPreviewRoute");
+$RefreshReg$(_c, "FormBuilderPage");
 window.$RefreshReg$ = prevRefreshReg;
 window.$RefreshSig$ = prevRefreshSig;
 export {
-  FormPreviewRoute as default
+  form_builder_default as default
 };
-//# sourceMappingURL=/build/routes/form-preview.$formId-3XJ4UEYW.js.map
+//# sourceMappingURL=/build/routes/form-builder-3A62DESF.js.map

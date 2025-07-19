@@ -13,7 +13,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration
-} from "/build/_shared/chunk-D376OADO.js";
+} from "/build/_shared/chunk-PCEBSVQY.js";
 import {
   createHotContext
 } from "/build/_shared/chunk-P6OU7LJU.js";
@@ -45,7 +45,7 @@ var store = configureStore({
 });
 
 // app/tailwind.css
-var tailwind_default = "/build/_assets/tailwind-BL6DYQ45.css";
+var tailwind_default = "/build/_assets/tailwind-CUMCZXJZ.css";
 
 // app/root.jsx
 var import_jsx_dev_runtime = __toESM(require_jsx_dev_runtime(), 1);
@@ -154,4 +154,4 @@ export {
   App as default,
   links
 };
-//# sourceMappingURL=/build/root-DJAJJ6XV.js.map
+//# sourceMappingURL=/build/root-HBUHHWY7.js.map

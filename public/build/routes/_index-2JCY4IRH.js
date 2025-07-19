@@ -11,7 +11,7 @@ import "/build/_shared/chunk-WH7AQ3C7.js";
 import {
   Link,
   useNavigate
-} from "/build/_shared/chunk-D376OADO.js";
+} from "/build/_shared/chunk-PCEBSVQY.js";
 import {
   createHotContext
 } from "/build/_shared/chunk-P6OU7LJU.js";
@@ -310,4 +310,4 @@ window.$RefreshSig$ = prevRefreshSig;
 export {
   Index as default
 };
-//# sourceMappingURL=/build/routes/_index-JYID6OFI.js.map
+//# sourceMappingURL=/build/routes/_index-2JCY4IRH.js.map

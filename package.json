@@ -4,8 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "remix build && remix export",
-    "deploy": "npm run build && firebase deploy --only hosting",
+    "build": "remix build",
     "dev": "remix dev",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve build",

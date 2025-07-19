@@ -7,7 +7,7 @@ import {
 import {
   Link,
   useNavigate
-} from "/build/_shared/chunk-D376OADO.js";
+} from "/build/_shared/chunk-PCEBSVQY.js";
 import {
   createHotContext
 } from "/build/_shared/chunk-P6OU7LJU.js";
@@ -46,8 +46,6 @@ function cloneObject(data) {
   const isFileListInstance = typeof FileList !== "undefined" ? data instanceof FileList : false;
   if (data instanceof Date) {
     copy = new Date(data);
-  } else if (data instanceof Set) {
-    copy = new Set(data);
   } else if (!(isWeb && (data instanceof Blob || isFileListInstance)) && (isArray || isObject(data))) {
     copy = isArray ? [] : {};
     if (!isArray && !isPlainObject(data)) {
@@ -658,7 +656,7 @@ function createFormControl(props = {}) {
     errors: _options.errors || {},
     disabled: _options.disabled || false
   };
-  const _fields = {};
+  let _fields = {};
   let _defaultValues = isObject(_options.defaultValues) || isObject(_options.values) ? cloneObject(_options.defaultValues || _options.values) || {} : {};
   let _formValues = _options.shouldUnregister ? {} : cloneObject(_defaultValues);
   let _state = {
@@ -1347,15 +1345,15 @@ function createFormControl(props = {}) {
             }
           }
         }
-        for (const fieldName of _names.mount) {
-          const value = get(values, fieldName, get(_defaultValues, fieldName));
-          if (!isUndefined(value)) {
-            set(values, fieldName, value);
+        if (keepStateOptions.keepFieldsRef) {
+          for (const fieldName of _names.mount) {
             setValue(fieldName, get(values, fieldName));
           }
+        } else {
+          _fields = {};
         }
       }
-      _formValues = cloneObject(values);
+      _formValues = _options.shouldUnregister ? keepStateOptions.keepDefaultValues ? cloneObject(_defaultValues) : {} : cloneObject(values);
       _subjects.array.next({
         values: { ...values }
       });
@@ -1570,7 +1568,10 @@ function useForm(props = {}) {
   }, [control, formState.isDirty]);
   import_react.default.useEffect(() => {
     if (props.values && !deepEqual(props.values, _values.current)) {
-      control._reset(props.values, control._options.resetOptions);
+      control._reset(props.values, {
+        keepFieldsRef: true,
+        ...control._options.resetOptions
+      });
       _values.current = props.values;
       updateFormState((state) => ({ ...state }));
     } else {
@@ -2180,4 +2181,4 @@ window.$RefreshSig$ = prevRefreshSig;
 export {
   FormPreview
 };
-//# sourceMappingURL=/build/_shared/chunk-SXFM52LL.js.map
+//# sourceMappingURL=/build/_shared/chunk-IGOQTOZD.js.map

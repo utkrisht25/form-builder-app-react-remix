@@ -403,6 +403,9 @@
   .block {
     display: block;
   }
+  .contents {
+    display: contents;
+  }
   .flex {
     display: flex;
   }
@@ -1358,4 +1361,4 @@
   }
 }
 /*! tailwindcss v4.1.11 | MIT License | https://tailwindcss.com */
-/*# sourceMappingURL=/build/_assets/tailwind-M24VTKH2.css.map */
+/*# sourceMappingURL=/build/_assets/tailwind-BNM6E2VM.css.map */

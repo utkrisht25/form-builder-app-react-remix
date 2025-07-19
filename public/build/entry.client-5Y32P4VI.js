@@ -3,7 +3,7 @@ import {
 } from "/build/_shared/chunk-O4BRYNJ4.js";
 import {
   RemixBrowser
-} from "/build/_shared/chunk-D376OADO.js";
+} from "/build/_shared/chunk-PCEBSVQY.js";
 import {
   createHotContext
 } from "/build/_shared/chunk-P6OU7LJU.js";
@@ -44,4 +44,4 @@ if (import.meta) {
     }, this)
   );
 });
-//# sourceMappingURL=/build/entry.client-EROJXFU3.js.map
+//# sourceMappingURL=/build/entry.client-5Y32P4VI.js.map

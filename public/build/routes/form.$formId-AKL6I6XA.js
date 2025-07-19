@@ -1,11 +1,12 @@
 import {
-  FormBuilder_default
-} from "/build/_shared/chunk-CUDZ4ZFX.js";
-import "/build/_shared/chunk-JCIKCEJC.js";
-import "/build/_shared/chunk-3W5JBBFO.js";
+  FormPreview
+} from "/build/_shared/chunk-IGOQTOZD.js";
+import "/build/_shared/chunk-W3HJSYIN.js";
 import "/build/_shared/chunk-HW4NUVRA.js";
 import "/build/_shared/chunk-WH7AQ3C7.js";
-import "/build/_shared/chunk-D376OADO.js";
+import {
+  useParams
+} from "/build/_shared/chunk-PCEBSVQY.js";
 import {
   createHotContext
 } from "/build/_shared/chunk-P6OU7LJU.js";
@@ -19,7 +20,7 @@ import {
   __toESM
 } from "/build/_shared/chunk-PNG5AS42.js";
 
-// app/routes/form-builder.jsx
+// app/routes/form.$formId.jsx
 var import_jsx_dev_runtime = __toESM(require_jsx_dev_runtime(), 1);
 if (!window.$RefreshReg$ || !window.$RefreshSig$ || !window.$RefreshRuntime$) {
   console.warn("remix:hmr: React Fast Refresh only works when the Remix compiler is running in development mode.");
@@ -27,37 +28,40 @@ if (!window.$RefreshReg$ || !window.$RefreshSig$ || !window.$RefreshRuntime$) {
   prevRefreshReg = window.$RefreshReg$;
   prevRefreshSig = window.$RefreshSig$;
   window.$RefreshReg$ = (type, id) => {
-    window.$RefreshRuntime$.register(type, '"app\\\\routes\\\\form-builder.jsx"' + id);
+    window.$RefreshRuntime$.register(type, '"app\\\\routes\\\\form.$formId.jsx"' + id);
   };
   window.$RefreshSig$ = window.$RefreshRuntime$.createSignatureFunctionForTransform;
 }
 var prevRefreshReg;
 var prevRefreshSig;
+var _s = $RefreshSig$();
 if (import.meta) {
   import.meta.hot = createHotContext(
     //@ts-expect-error
-    "app\\routes\\form-builder.jsx"
+    "app\\routes\\form.$formId.jsx"
   );
-  import.meta.hot.lastModified = "1748797210382.5815";
+  import.meta.hot.lastModified = "1748797210393.4897";
 }
-function FormBuilderPage() {
-  return /* @__PURE__ */ (0, import_jsx_dev_runtime.jsxDEV)("div", { className: "min-h-screen bg-gray-100", children: /* @__PURE__ */ (0, import_jsx_dev_runtime.jsxDEV)(FormBuilder_default, {}, void 0, false, {
-    fileName: "app/routes/form-builder.jsx",
-    lineNumber: 25,
-    columnNumber: 11
-  }, this) }, void 0, false, {
-    fileName: "app/routes/form-builder.jsx",
-    lineNumber: 24,
+function FormRoute() {
+  _s();
+  const {
+    formId
+  } = useParams();
+  return /* @__PURE__ */ (0, import_jsx_dev_runtime.jsxDEV)(FormPreview, { formId, isUserMode: true }, void 0, false, {
+    fileName: "app/routes/form.$formId.jsx",
+    lineNumber: 30,
     columnNumber: 10
   }, this);
 }
-_c = FormBuilderPage;
-var form_builder_default = FormBuilderPage;
+_s(FormRoute, "vD5o/dR4M8CGQWCLPy2oL2jh/IQ=", false, function() {
+  return [useParams];
+});
+_c = FormRoute;
 var _c;
-$RefreshReg$(_c, "FormBuilderPage");
+$RefreshReg$(_c, "FormRoute");
 window.$RefreshReg$ = prevRefreshReg;
 window.$RefreshSig$ = prevRefreshSig;
 export {
-  form_builder_default as default
+  FormRoute as default
 };
-//# sourceMappingURL=/build/routes/form-builder-J2TCUNGQ.js.map
+//# sourceMappingURL=/build/routes/form.$formId-AKL6I6XA.js.map

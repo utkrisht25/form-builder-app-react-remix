@@ -8,7 +8,7 @@ if (import.meta) {
     //@ts-expect-error
     "app\\components\\helper.jsx"
   );
-  import.meta.hot.lastModified = "1751120554679.8384";
+  import.meta.hot.lastModified = "1751124128240.8933";
 }
 var copyFormLink = (formId, setCopiedId) => {
   const formUrl = `${window.location.origin}/form/${formId}`;
@@ -45,4 +45,4 @@ function fallbackCopy(text, setCopiedId, formId) {
 export {
   copyFormLink
 };
-//# sourceMappingURL=/build/_shared/chunk-YMOWICR5.js.map
+//# sourceMappingURL=/build/_shared/chunk-W3HJSYIN.js.map
